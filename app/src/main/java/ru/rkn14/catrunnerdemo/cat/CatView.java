@@ -1,24 +1,26 @@
 package ru.rkn14.catrunnerdemo.cat;
 
-import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
+import android.view.View;
 import android.view.animation.Animation;
 import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import ru.rkn14.catrunnerdemo.R;
 
 public class CatView extends ConstraintLayout {
-    private static final int VELOCITY = 300;
+    private static final int DURATION = 300;
     private ImageView head;
     private ImageView body;
     private ImageView handLeft;
     private ImageView handRight;
     private ImageView legLeft;
     private ImageView legRight;
+    private ImageView eyeRight;
+    private ImageView eyeLeft;
     private ObjectAnimator handRightAnimation1;
     private ObjectAnimator handRightAnimation2;
     private ObjectAnimator handLeftAnimation1;
@@ -27,6 +29,8 @@ public class CatView extends ConstraintLayout {
     private ObjectAnimator legRightAnimation2;
     private ObjectAnimator legLeftAnimation1;
     private ObjectAnimator legLeftAnimation2;
+    private ObjectAnimator eyeLeftAnimation;
+    private ObjectAnimator eyeRightAnimation;
 
     public CatView(Context context) {
         super(context);
@@ -51,6 +55,11 @@ public class CatView extends ConstraintLayout {
         handRight = findViewById(R.id.cat_hand_right_image_view);
         legLeft = findViewById(R.id.cat_leg_left_image_view);
         legRight = findViewById(R.id.cat_leg_right_image_view);
+        eyeLeft = findViewById(R.id.cat_eye_left);
+        eyeRight = findViewById(R.id.cat_eye_right);
+
+        Glide.with(this).load(R.drawable.eye_sad).into(eyeLeft);
+        Glide.with(this).load(R.drawable.eye_sad).into(eyeRight);
 
         setSkin(Skins.COMMON);
         setHead(Heads.COMMON);
@@ -61,44 +70,57 @@ public class CatView extends ConstraintLayout {
         handRight.setPivotY(5);
         handRight.setPivotX(5);
 
+        eyeLeftAnimation = ObjectAnimator.ofFloat(eyeLeft, "rotation", 10f, 0f);
+        eyeLeftAnimation.setDuration(100);
+        eyeLeftAnimation.setRepeatMode(ValueAnimator.REVERSE);
+        eyeLeftAnimation.setRepeatCount(Animation.INFINITE);
+
+        eyeRightAnimation = ObjectAnimator.ofFloat(eyeRight, "rotation", 10f, 0f);
+        eyeRightAnimation.setDuration(100);
+        eyeRightAnimation.setRepeatMode(ValueAnimator.REVERSE);
+        eyeRightAnimation.setRepeatCount(Animation.INFINITE);
+
+        eyeLeftAnimation.start();
+        eyeRightAnimation.start();
+
         handRightAnimation1 = ObjectAnimator.ofFloat(handRight, "rotation", 10f, 30f);
-        handRightAnimation1.setDuration(VELOCITY);
+        handRightAnimation1.setDuration(DURATION);
         handRightAnimation1.setRepeatMode(ValueAnimator.REVERSE);
         handRightAnimation1.setRepeatCount(Animation.INFINITE);
 
         handRightAnimation2 = ObjectAnimator.ofFloat(handRight, "rotation", -10f, -30f);
-        handRightAnimation2.setDuration(VELOCITY);
+        handRightAnimation2.setDuration(DURATION);
         handRightAnimation2.setRepeatMode(ValueAnimator.REVERSE);
         handRightAnimation2.setRepeatCount(Animation.INFINITE);
 
         handLeftAnimation1 = ObjectAnimator.ofFloat(handLeft, "rotation", -30f, -10f);
-        handLeftAnimation1.setDuration(VELOCITY);
+        handLeftAnimation1.setDuration(DURATION);
         handLeftAnimation1.setRepeatMode(ValueAnimator.REVERSE);
         handLeftAnimation1.setRepeatCount(Animation.INFINITE);
 
         handLeftAnimation2 = ObjectAnimator.ofFloat(handLeft, "rotation", 30f, 10f);
-        handLeftAnimation2.setDuration(VELOCITY);
+        handLeftAnimation2.setDuration(DURATION);
         handLeftAnimation2.setRepeatMode(ValueAnimator.REVERSE);
         handLeftAnimation2.setRepeatCount(Animation.INFINITE);
 
         legRightAnimation1 = ObjectAnimator.ofFloat(legRight, "translationY", 20f);
-        legRightAnimation1.setDuration(VELOCITY);
+        legRightAnimation1.setDuration(DURATION);
         legRightAnimation1.setRepeatMode(ValueAnimator.REVERSE);
         legRightAnimation1.setRepeatCount(Animation.INFINITE);
 
         legRightAnimation2 = ObjectAnimator.ofFloat(legLeft, "translationY", -20f);
-        legRightAnimation2.setStartDelay(VELOCITY);
-        legRightAnimation2.setDuration(VELOCITY);
+        legRightAnimation2.setStartDelay(DURATION);
+        legRightAnimation2.setDuration(DURATION);
         legRightAnimation2.setRepeatMode(ValueAnimator.REVERSE);
         legRightAnimation2.setRepeatCount(Animation.INFINITE);
 
         legLeftAnimation1 = ObjectAnimator.ofFloat(legLeft, "translationY", -20f);
-        legLeftAnimation1.setDuration(VELOCITY);
+        legLeftAnimation1.setDuration(DURATION);
         legLeftAnimation1.setRepeatMode(ValueAnimator.REVERSE);
         legLeftAnimation1.setRepeatCount(Animation.INFINITE);
 
         legLeftAnimation2 = ObjectAnimator.ofFloat(legRight, "translationY", -20f);
-        legLeftAnimation2.setDuration(VELOCITY);
+        legLeftAnimation2.setDuration(DURATION);
         legLeftAnimation2.setRepeatMode(ValueAnimator.REVERSE);
         legLeftAnimation2.setRepeatCount(Animation.INFINITE);
     }
@@ -165,6 +187,9 @@ public class CatView extends ConstraintLayout {
     }
 
     public void setHead(Heads head) {
+        eyeLeft.setVisibility(View.GONE);
+        eyeRight.setVisibility(View.GONE);
+
         switch (head) {
             case COMMON:
                 Glide.with(this).load(R.drawable.head_common).into(this.head);
@@ -180,6 +205,8 @@ public class CatView extends ConstraintLayout {
 
             case SAD:
                 Glide.with(this).load(R.drawable.head_sad).into(this.head);
+                eyeLeft.setVisibility(View.VISIBLE);
+                eyeRight.setVisibility(View.VISIBLE);
                 break;
 
             case SHOCK:
@@ -212,10 +239,9 @@ public class CatView extends ConstraintLayout {
         legRightAnimation2.cancel();
         legLeftAnimation1.cancel();
         legLeftAnimation2.cancel();
+    }
 
-        handLeft.clearAnimation();
-        handRight.clearAnimation();
-        legLeft.clearAnimation();
-        legRight.clearAnimation();
+    public void hello() {
+        stop();
     }
 }
